@@ -75,6 +75,30 @@ node tools/check-compact.cjs after.jsonl before.jsonl digest.md
 
 `bundles/compaction-zh/` 把 DSH 默认的英文压缩指令替换成**中文、分领域、保真**模板；自动压缩与 `/compact` 都生效，会话仍是原 session-id。安装见该目录 `README.md`。
 
+## 工具链（三件套）
+
+| 工具 | 位置 | 作用 |
+|---|---|---|
+| 中文压缩引擎 | `bundles/compaction-zh/` | 把 DSH 默认英文压缩指令换成中文、分领域模板；自动压缩与 `/compact` 都生效，原 session-id 不变 |
+| 会话导入器 | `bundles/session-import/` | 把会话 zip 导入 DSH / DSH Go：写 sessions + 登记 workspace.json |
+| 打包器 | `tools/pack-sessions.cjs` | 桌面端把某工作区会话打成 zip（manifest + session 文件） |
+| 分析工具 | `tools/*.cjs` | 解压、导出 Markdown、尺寸分析、压缩质量检查、盘点 |
+
+## 常见坑（实测）
+
+1. **自动压缩会抢跑**：DSH 默认 `auto: true`，在请求前按压力自动压缩；写“先笔记再压缩”会被它插队。对策：用 `compaction-zh` 让自动压缩本身产出中文保真摘要，不要试图靠顶层 patch 关它（`compaction-basic` 是嵌套行，顶层 patch 往往打不到）。
+2. **改 `contextWindow` 不改变压缩阈值**：阈值按适配器容量/压力算，调大声明值无效（实测 1M→2M 仍触发）。
+3. **工作区目录键有转义规则**：`D:\Project_Mine\Agent` → `--D-Project_Mine-Agent--`（盘符后的 `:\` 合并成一个 `-`），空格 → `~0020`（如 `Obsidian~0020Vault`）。打包/导入必须用同一规则，否则会话“导入了但看不见”。
+4. **v3/v4 格式**：0.2.x 写 v4；旧内核只读 v3。跨版本导入前先确认目标内核能读。
+5. **`/compact` 只压“保留尾巴之前”的一段**：默认保留约 16% 窗口；尾巴内有超大消息时一次能压的很少。
+6. **会话 zip 不要包含本地备份**：只收 `session.v*.jsonl.zstd`，否则体积翻倍、导入脏文件。
+
+## DSH Go 交付
+
+- **Remote 模式（存量会话推荐）**：DSH Go 连电脑，压缩在电脑侧完成，手机只看结果；
+- **Local 模式**：装 `compaction-zh` + `session-import`，用 `pack-sessions` 打包 → 传手机 → `import_sessions` 导入 → 重启刷新；
+- 导入后会话头里的 `cwd` 仍是电脑路径（只影响工具工作目录，显示不受影响）。
+
 ## 实测证据
 
 `杂论`（Agent 工作区，515,662 tokens）：

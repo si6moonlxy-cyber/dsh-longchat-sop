@@ -112,20 +112,54 @@
 - 再执行 `/compact`（`retainTokens` 设为能保住这条笔记的大小）；
 - 结果：原会话继续可用，且最新的中文笔记在保留尾巴里，不会被英文摘要覆盖。
 
-## 7. 归档与上手机
+## 10. 工具链与安装
+
+| 组件 | 用法 |
+|---|---|
+| `bundles/compaction-zh` | 安装为 bundle；重启后压缩指令变为中文八节模板 |
+| `bundles/session-import` | 安装为 bundle；提供 `import_sessions` 工具 |
+| `tools/pack-sessions.cjs` | `node tools/pack-sessions.cjs out.zip <workspacePath> [sessionIds]` |
+| `tools/decompress-session.cjs` / `export-markdown.cjs` | 归档与可读化 |
+| `tools/check-compact.cjs` | 压缩质量检查 |
+
+## 11. 常见坑与对策
+
+1. **自动压缩抢跑**：默认 `auto: true`，请求前按压力压缩，会插在“写笔记”与“手动压缩”之间。对策：用 `compaction-zh` 让自动压缩本身产出中文保真摘要；不要依赖顶层 patch 关 `compaction-basic`（嵌套行，patch 常打不到）。
+2. **调 `contextWindow` 不改阈值**：阈值按适配器容量与压力计算，改声明值无效（实测 1M→2M 仍自动压）。
+3. **工作区目录键**：`D:\a\b` → `--D-a-b--`；盘符后的 `:\` 合并为一个 `-`；空格 → `~0020`。打包与导入必须一致。
+4. **格式版本**：0.2.x 写 v4，旧版只读 v3；跨版本先确认。
+5. **`/compact` 只压保留尾巴之前**：尾巴内超大消息会让一次压缩量很小。
+6. **zip 只收正式会话文件**：跳过 `.after-A` / `.before-B` 备份。
+
+## 12. DSH Go 交付形态
+
+- Remote（存量）：手机连电脑，压缩发生在电脑；无需搬会话。
+- Local（新会话）：手机装 `compaction-zh` + `session-import`；`pack-sessions` 打包 → 传手机 → `import_sessions` → 重启刷新。
+- 限制：导入后 `cwd` 仍是电脑路径；Android 路径以 DSH Go 私有目录为准；导入需“访问手机文件”权限。
+
+## 13. 验收清单
+
+- [ ] 原会话 id 未变，能继续对话
+- [ ] 压缩摘要为中文八节，含关键原话/数字/日期/路径
+- [ ] 风险语句（咨询类）逐字保留
+- [ ] 工作区键与目标环境一致，导入后侧栏可见
+- [ ] 归档 zip 与 manifest 可回查
+- [ ] 自动压缩触发后摘要仍为中文模板
+
+## 14. 归档与上手机
 
 - zip：`sessions/` + `markdown/` + `manifest.json` + `INDEX.md`
 - 手机先看 `INDEX.md`；要查阅用 `markdown/`
 - 要继续对话：DSH Go 用 remote 模式连接电脑（比导入会话稳），或用 L3 种子在新会话继续
 
-## 8. 批量策略
+## 15. 批量策略
 
 - 不要手点几百次 `/compact`（每次一次模型调用，成本高）；
 - 批量流水线：导出 Markdown → 分片 → 子代理并行生成 L2 摘要 → 合并 INDEX；
 - 每批 20–30 个，抽查 3 个再继续；
 - 只对 A 类（要继续）做 DSH 压缩，B/C 类只归档。
 
-## 9. 验收记录（2026-11-18，杂论）
+## 16. 验收记录（2026-11-18，杂论）
 
 - 压缩前：1,076 条消息 / 515,662 tokens / 1,250,436 字符
 - `/compact`：1,615 条 / 515,040 tokens；压缩后表面 2,308 tokens
