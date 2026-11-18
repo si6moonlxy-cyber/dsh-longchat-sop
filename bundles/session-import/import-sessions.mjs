@@ -52,7 +52,9 @@ export function readZip(buf) {
 
 // ---------- 工作区工具 ----------
 function workspaceKeyFor(workspacePath) {
-  return '--' + workspacePath.replace(/[\\/:*?"<>|]/g, '-') + '--'
+  let s = String(workspacePath).replace(/^([A-Za-z]):[\\/]/, '$1-')
+  s = s.replace(/[\\/]/g, '-').replace(/ /g, '~0020').replace(/[<>:"|?*]/g, '-')
+  return '--' + s + '--'
 }
 
 function readJsonSafe(file, fallback) {

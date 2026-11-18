@@ -5,6 +5,13 @@ const path = require('path')
 
 const HOME = process.env.DSH_HOME || path.join(process.env.APPDATA || '', 'dsh-desktop', 'harness')
 
+// DSH 的会话目录键：盘符 "D:\" → "D-"，其余 \ 或 / → "-"，空格 → "~0020"
+function workspaceKeyFor(workspacePath) {
+  let s = workspacePath.replace(/^([A-Za-z]):[\\/]/, '$1-')
+  s = s.replace(/[\\/]/g, '-').replace(/ /g, '~0020').replace(/[<>:"|?*]/g, '-')
+  return '--' + s + '--'
+}
+
 // ---------- CRC32 ----------
 const CRC_TABLE = new Uint32Array(256)
 for (let n = 0; n < 256; n++) {
@@ -87,7 +94,7 @@ const ws = JSON.parse(fs.readFileSync(wsFile, 'utf8'))
 const entry = Object.values(ws.tables.workspaces).find((w) => String(w.path).toLowerCase() === workspacePath.toLowerCase())
 if (!entry) { console.error('workspace not found in workspace.json: ' + workspacePath); process.exit(1) }
 
-const key = '--' + workspacePath.replace(/[\\/:*?"<>|]/g, '-') + '--'
+const key = workspaceKeyFor(workspacePath)
 const dir = path.join(HOME, 'sessions', key)
 const wanted = sessionFilter ? sessionFilter.split(',') : entry.sessionIds
 const entries = []
