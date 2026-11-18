@@ -33,9 +33,13 @@ tools/export-markdown.cjs     JSONL → 可读 Markdown（自动去运行时/记
 tools/analyze-session.cjs     消息尺寸分布（判断压缩可行性）
 tools/check-compact.cjs       压缩质量检查（摘要长度/结构/关键词覆盖）
 tools/show-compaction.cjs     查看会话里的 compaction 事件与摘要
+tools/inventory-sessions.cjs  盘点全部会话（工作区/标题/tokens）→ CSV（Windows Desktop）
 ```
 
 ## 快速开始
+
+> 需要 Node 22.15+ / 24（脚本用内置 `zlib.zstdDecompressSync`，无需安装依赖）。
+> `inventory-sessions.cjs` 读的是 Windows Desktop 的 `%APPDATA%\dsh-desktop\harness`，其他平台需改路径。
 
 ```powershell
 # 1) 定位会话文件
@@ -48,7 +52,7 @@ node tools/decompress-session.cjs $s out.jsonl
 node tools/analyze-session.cjs out.jsonl
 
 # 4) 导出可读 Markdown（去掉运行时与记忆注入块）
-node tools/export-markdown.cjs out.jsonl transcript.md
+node tools/export-markdown.cjs out.jsonl transcript.md   # 第 4 个参数可指定助手显示名，默认「助手」
 
 # 5) 压缩后验收
 node tools/check-compact.cjs after.jsonl before.jsonl digest.md
