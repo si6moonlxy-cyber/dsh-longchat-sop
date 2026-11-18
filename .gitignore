@@ -5,7 +5,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# 私有数据：绝不入库（本地记录放 D:\dsh-private，不放在本仓库）
+# ç§æœ‰æ•°æ®ï¼šç»ä¸å…¥åº“ï¼ˆæœ¬åœ°è®°å½•æ”¾ D:\dsh-privateï¼Œä¸æ”¾åœ¨æœ¬ä»“åº“ï¼‰
 samples/
 transcripts/
 chunks/
