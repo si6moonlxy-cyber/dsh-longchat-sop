@@ -1,0 +1,15 @@
+{
+  "name": "@local/dsh-compaction-zh",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chinese domain-aware compaction instruction for DeepSeek Harness",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.0"
+  }
+}

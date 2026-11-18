@@ -1,0 +1,3 @@
+- insert:
+    - id: compaction-zh
+      name: './compaction-zh.mjs'
