@@ -71,6 +71,10 @@ node tools/check-compact.cjs after.jsonl before.jsonl digest.md
 
 咨询类为什么不行：通用压缩会把对话压成英文工程摘要，丢掉原话、语气与风险信息，并改变治疗关系。详见 `docs/SOP.md`。
 
+## B：中文压缩引擎（可选增强）
+
+`bundles/compaction-zh/` 把 DSH 默认的英文压缩指令替换成**中文、分领域、保真**模板；自动压缩与 `/compact` 都生效，会话仍是原 session-id。安装见该目录 `README.md`。
+
 ## 实测证据
 
 `杂论`（Agent 工作区，515,662 tokens）：
