@@ -1,0 +1,3 @@
+- insert:
+    - id: session-import
+      name: './import-sessions.mjs'

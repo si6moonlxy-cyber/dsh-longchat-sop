@@ -1,0 +1,15 @@
+{
+  "name": "@local/dsh-session-import",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Import DSH session zips into the current DSH home (works on DSH Go local mode)",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.0"
+  }
+}
