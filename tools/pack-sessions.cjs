@@ -106,6 +106,8 @@ for (const sid of wanted) {
   for (const f of fs.readdirSync(sdir)) {
     const fp = path.join(sdir, f)
     if (!fs.statSync(fp).isFile()) continue
+    // 只收正式会话文件，跳过 .after-A/.before-B 这类本地备份
+    if (!/^session(\.v\d+)?\.jsonl\.zstd$/.test(f)) continue
     entries.push({ name: `sessions/${key}/${sid}/${f}`, data: fs.readFileSync(fp) })
   }
 }
