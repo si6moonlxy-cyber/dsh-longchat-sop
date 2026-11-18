@@ -4,3 +4,11 @@ node_modules/
 *.zstd
 .DS_Store
 Thumbs.db
+
+# 私有数据：绝不入库（本地记录放 D:\dsh-private，不放在本仓库）
+samples/
+transcripts/
+chunks/
+artifacts/
+inventory*.csv
+INDEX-*.md
