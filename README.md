@@ -95,9 +95,10 @@ node tools/check-compact.cjs after.jsonl before.jsonl digest.md
 
 ## DSH Go 交付
 
+- **只读交付（最稳）**：`pack-sessions` / Markdown 包，手机解压即读，不装插件、不重启；
 - **Remote 模式（存量会话推荐）**：DSH Go 连电脑，压缩在电脑侧完成，手机只看结果；
-- **Local 模式**：装 `compaction-zh` + `session-import`，用 `pack-sessions` 打包 → 传手机 → `import_sessions` 导入 → 重启刷新；
-- 导入后会话头里的 `cwd` 仍是电脑路径（只影响工具工作目录，显示不受影响）。
+- **真会话导入（实测可行）**：桌面 `/export` 得到 `dsh-session-<id>.zip`（内含 `session.v4.jsonl`）→ 手机装 `dsh-session-port`（npm 镜像）→ 用 `import_session_into(path, targetDirectory)` 导入到指定工作区；细节与 helper 源码见 `docs/dsh-go-real-session.md`。
+- 导入后会话头里的 `cwd` 会被改写成目标目录；手拼包无附件，原生 `/export` 自带 `media/`、`files/`。
 
 ## 实测证据
 
